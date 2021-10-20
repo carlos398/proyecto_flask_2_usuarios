@@ -1,18 +1,27 @@
 from flask import Flask, request, render_template
 from flask_mysqldb import MySQL
+from flask_wtf import CsrfProtect
+import forms 
 
 app = Flask(__name__)
+app.secret_key = 'my_secret_key'
+csrf = CsrfProtect(app)
 
 
-@app.route('/')
+@app.route('/', methods = ['GET', 'POST'])
 def index():
-    return 'holap'
+    login_form = forms.login(request.form)
+    if request.method == 'POST' and login_form.validate():
+        print(login_form.username.data)
+        print(login_form.password.data)
+    else:
+        print("error en el formulario")
+    return render_template('index.html', form = login_form)
 
-#validador de rutas
+
 @app.route('/params')
-@app.route('/params/<name>')
-def params(name = 'nombre por defecto'):
-    return "el parametro es {}".format(name) 
+def params():
+    return 'params'
 
 
 def pagina_no_encontrada(error):

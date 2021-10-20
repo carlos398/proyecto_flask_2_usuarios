@@ -1,0 +1,10 @@
+
+{% from "macro.html" import show_form %}
+
+<form method="POST">
+    {{show_form(form.username, class="")}}
+    {{show_form(form.password)}}
+
+    {{form.honeypot}}
+    <button type="submit">Enviar</button>
+</form>
