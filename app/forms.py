@@ -46,3 +46,30 @@ class login(Form):
         ])
 
     honeypot = HiddenField('',[length_honeypot] ) 
+
+
+class register_form(Form):
+
+    username = StringField('Username', [
+        validators.Required(message = 'The username is required'),
+        validators.length(
+            min=4, 
+            max=50, 
+            message='the user is invalid')
+    ])
+
+    email = EmailField('Email', [
+        validators.Required(message = 'The email is required'),
+        validators.length(
+            min=8, 
+            max=40, 
+            message='The email is invalid')
+    ])
+
+    password = PasswordField('Password', [
+        validators.Required(message = 'The password is required'),
+        validators.length(
+            min=4, 
+            max=66, 
+            message='The password is invalid')
+    ]) 
