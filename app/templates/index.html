@@ -1,7 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block body %}
 
 {% from "macro.html" import show_form %}
 
-<form method="POST">
+<form method="POST" id="login_form">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     {{show_form(form.username, class="")}}
     {{show_form(form.password)}}
@@ -9,3 +12,5 @@
     {{form.honeypot}}
     <button type="submit">Enviar</button>
 </form>
+
+{% endblock %}
