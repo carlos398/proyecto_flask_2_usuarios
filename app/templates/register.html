@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+{% from "macro.html" import show_form %}
+
+<form action="" method='POST'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {{show_form(register.username)}}
+    {{show_form(register.email)}}
+    {{show_form(register.password)}}
+    <button type="submit">Enviar</button>
+</form>
+
+{% endblock %}

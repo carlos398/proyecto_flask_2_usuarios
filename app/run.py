@@ -30,6 +30,26 @@ def index():
     return render_template('index1.html', title = tittle)
 
 
+@app.route('/register', methods = ['GET', 'POST'])
+def create_user():
+    register_form = forms.register_form(request.form)
+    if request.method == 'POST' and register_form.validate():
+
+        user = User(
+            username = register_form.username.data,
+            email = register_form.email.data,
+            password = register_form.password.data
+            )
+
+        db.session.add(user)
+        db.session.commit()
+
+        succes_message = 'The user is create in the database congrats'
+        flash(succes_message)
+
+    return render_template('register.html', register = register_form)
+
+
 @app.route('/logout')
 def logout():
     if 'username' in session:
