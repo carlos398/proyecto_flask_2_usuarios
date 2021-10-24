@@ -6,5 +6,5 @@ class Config(object):
 
 class DevelopmentConfig(Config): #el parametro es de donde ereda
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/flask_practicas' #entes del arroba y despues de los : va la clave si tuviera
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:@localhost/users_control' #entes del arroba y despues de los : va la clave si tuviera
     SQLALCHEMY_TRACK_MODIFICATIONS = False

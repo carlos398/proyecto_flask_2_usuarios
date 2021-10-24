@@ -4,7 +4,7 @@ from flask_mysqldb import MySQL
 from flask_wtf import CsrfProtect
 from flask import redirect
 from config import DevelopmentConfig
-from models import db, User
+from models import db, User, Comment
 import forms 
 
 app = Flask(__name__)
@@ -18,7 +18,7 @@ def befor_request():
     #     return redirect(url_for("login"))
     g.test = 'test 1' #manejo de variables globales mediante g de flask
     print(g.test)
-    if 'username' not in session and request.endpoint in ['index']:
+    if 'username' not in session and request.endpoint in ['index', 'comment']:
         return redirect(url_for('login'))
     elif 'username' in session and request.endpoint in ['login', 'create_user']:
         return redirect(url_for('index'))
@@ -69,13 +69,35 @@ def login():
         if user is not None and user.verify_password(password):
             success_message = 'bienvenido {}'.format(username)
             flash(success_message)
-            session['username'] = login_form.username.data
+            session['username'] = username
+            session['user_id'] = user.id
             return redirect(url_for('index'))
         else:
             error_message = ' usuario o contraseña no validos'
             flash(error_message)
         
     return render_template('index.html', form = login_form) #el response es el return de las funciones 
+
+
+@app.route('/comment', methods = ['GET', 'POST'])
+def comment():
+    comment_form = forms.CommentForm(request.form)
+    if request.method == 'POST' and comment_form.validate():
+
+        user_id = session['user_id']
+        comentario = Comment(
+            user_id = user_id , 
+            text = comment_form.comment.data)
+        db.session.add(comentario)
+        db.session.commit()
+
+        succes_message = 'nuevo comentario creadp'
+        print(succes_message)
+        flash(succes_message)
+        
+        return render_template('index1.html')
+
+    return render_template('comment.html', form = comment_form)
 
 
 # @app.after_request()

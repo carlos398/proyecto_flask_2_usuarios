@@ -1,6 +1,6 @@
 from wtforms import Form, StringField, TextField, validators, HiddenField, PasswordField
 from wtforms.fields.html5 import EmailField
-
+from models import User
 
 class CommentForm(Form):
 
@@ -73,3 +73,9 @@ class register_form(Form):
             max=66, 
             message='The password is invalid')
     ]) 
+
+    def validate_username(form, field):
+        username = field.data 
+        user = User.query.filter_by(username = username).first()
+        if user is not None:
+            raise validators.ValidationError('el username ya se encuentra registrado')
