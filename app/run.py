@@ -18,14 +18,15 @@ def befor_request():
     #     return redirect(url_for("login"))
     g.test = 'test 1' #manejo de variables globales mediante g de flask
     print(g.test)
+    if 'username' not in session and request.endpoint in ['index']:
+        return redirect(url_for('login'))
+    elif 'username' in session and request.endpoint in ['login', 'create_user']:
+        return redirect(url_for('index'))
 
 
 @app.route('/')
 def index():
     print(g.test) #si fuese una nueva conexion a una bd podemos pasarle un .close() para que se cierre la consulta
-    if 'username' in session:
-        username = session['username']
-        print(username)
     tittle = 'index'
     return render_template('index1.html', title = tittle)
 
@@ -36,9 +37,9 @@ def create_user():
     if request.method == 'POST' and register_form.validate():
 
         user = User(
-            username = register_form.username.data,
-            email = register_form.email.data,
-            password = register_form.password.data
+            register_form.username.data,
+            register_form.email.data,
+            register_form.password.data
             )
 
         db.session.add(user)
@@ -62,9 +63,18 @@ def login():
     login_form = forms.login(request.form)
     if request.method == 'POST' and login_form.validate():
         username = login_form.username.data
-        success_message = 'bienvenido {}'.format(username)
-        flash(success_message)
-        session['username'] = login_form.username.data
+        password = login_form.password.data
+
+        user = User.query.filter_by(username = username).first()
+        if user is not None and user.verify_password(password):
+            success_message = 'bienvenido {}'.format(username)
+            flash(success_message)
+            session['username'] = login_form.username.data
+            return redirect(url_for('index'))
+        else:
+            error_message = ' usuario o contraseña no validos'
+            flash(error_message)
+        
     return render_template('index.html', form = login_form) #el response es el return de las funciones 
 
 
