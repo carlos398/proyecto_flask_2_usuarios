@@ -6,6 +6,7 @@ from flask import redirect
 from config import DevelopmentConfig
 from models import db, User, Comment
 import forms 
+from helper import date_format
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -28,7 +29,9 @@ def befor_request():
 def index():
     print(g.test) #si fuese una nueva conexion a una bd podemos pasarle un .close() para que se cierre la consulta
     tittle = 'index'
-    return render_template('index1.html', title = tittle)
+    username = session['username']
+    print(username)
+    return render_template('index1.html', title = tittle, username = username)
 
 
 @app.route('/register', methods = ['GET', 'POST'])
@@ -98,6 +101,34 @@ def comment():
         return render_template('index1.html')
 
     return render_template('comment.html', form = comment_form)
+
+
+@app.route('/reviews/', methods = ['GET'])
+@app.route('/reviews/<int:page>', methods = ['GET'])
+def reviews(page = 1):
+    per_page = 3
+    comment_list = Comment.query.join(User).add_columns(
+        User.username, 
+        Comment.text,
+        Comment.created_date).paginate(page,per_page,False)
+    return render_template(
+        'review.html', 
+        comments = comment_list, 
+        date_format = date_format)
+
+
+@app.route('/<username>/reviews/', methods = ['GET'])
+@app.route('/<username>/reviews/<int:page>', methods = ['GET'])
+def profile(username, page = 1):
+    per_page = 3
+    comment_list = Comment.query.join(User).add_columns(
+        User.username, 
+        Comment.text,
+        Comment.created_date).filter_by(username = username).paginate(page,per_page,False)
+    return render_template(
+        'review.html', 
+        comments = comment_list, 
+        date_format = date_format)
 
 
 # @app.after_request()

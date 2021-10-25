@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="container">
+        {{username}}
+        {% if comments %}
+            {% for comment in comments.items %}
+                <p>{{ comment.username }}</p>
+                <p>{{ comment.text }}</p>
+                <h5>{{ date_format(comment.created_date) }}</h5>
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}
